@@ -49,7 +49,7 @@ def window_open():
 window_reset()
 
 
-temperature_margin = 3.0
+temp_margin = 2.0
 
 while True:
     try:
@@ -64,11 +64,14 @@ while True:
 
         if device.online:
             time_str = structure.weather.current.datetime.strftime('%Y-%m-%d %H:%M:%S')
-
+            
             print 'Time                           : %s' % time_str
             print 'Away                           : %s' % structure.away
             print 'Inside Temp                    : %s' % device.temperature
             print 'Outside Temperature            : %s' % structure.weather.current.temperature
+
+            print 'Condition                      : %s' % structure.weather.current.condition
+
 
             print 'Away Heat                      : %s' % device.away_temperature[0]
             print 'Away Cool                      : %s' % device.away_temperature[1]
@@ -86,15 +89,8 @@ while True:
             
             if device.mode == "heat":
                 lowTarget = device.target
-                if outsideTemperture > insideTemperture:
-                    window_should_open = True
-                    print "heat mode and outside > inside open window"
             elif device.mode == "cool":
-                highTarget = device.target
-                if outsideTemperture < insideTemperture:
-                    if insideTemperture > (highTarget - temperature_margin):
-                        window_should_open = True
-                        print "cool mode and outside < inside open window"
+                highTarget = device.target - temp_margin
             elif device.mode == "range":
                 lowTarget = device.target[0]
                 highTarget = device.target[1]
@@ -110,6 +106,7 @@ while True:
             
             print 'High Target                    : %s' % highTarget
             print 'Low  Target                    : %s' % lowTarget
+            print 'Inside Temp                    : %s' % device.temperature
             print 'Window Open                    : %s' % window_should_open
 
             if window_should_open:
@@ -119,14 +116,7 @@ while True:
     except Exception:
         traceback.print_exc()
 
-    print "Sleep 15 minutes"
+    print "Sleep 60 minutes"
     sys.stdout.flush()
-    time.sleep(60*15)
-
-
-
-
-
-
-
+    time.sleep(60*60)
 
